@@ -1,10 +1,11 @@
 package Repository.Impl;
 
 import Entity.Player;
-import Repository.Interface.DAO;
+import Repository.Interface.NamedEntityDao;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
-public class PlayerDao implements DAO<Integer, Player> {
+public class PlayerDao implements NamedEntityDao<Integer, Player> {
 
     private final SessionFactory sessionFactory;
 
@@ -62,21 +63,36 @@ public class PlayerDao implements DAO<Integer, Player> {
     }
 
     @Override
+    public Optional<Player> getByName(String name) {
+        Optional<Player> optionalPlayer;
+
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            optionalPlayer = Optional.ofNullable(
+                    session.createSelectionQuery("FROM Player WHERE name= :name", Player.class)
+                            .setParameter("name", name)
+                            .uniqueResult()
+            );
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            log.error("Ошибка при работе c базой данных: {}", e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return optionalPlayer;
+    }
+
+    @Override
     public void save(Player player) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-            Player existingPlayer = session.createQuery("FROM Player WHERE name = :name", Player.class)
-                            .setParameter("name", player.getName())
-                            .uniqueResult();
-
-            if (existingPlayer != null) {
-                return;
-            }
-
             session.merge(player);
 
             session.getTransaction().commit();
+        } catch (ConstraintViolationException e) {
+            log.error("Попытка сохранить в базу данных пользователя с уже существующим именем - {}", player.getName());
         } catch (Exception e) {
             log.error("Ошибка при работе c базой данных: {}", e.getMessage(), e);
             throw new RuntimeException(e);
