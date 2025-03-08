@@ -29,6 +29,6 @@ public class Match {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "winner")
-    private Integer winner;
+    private Player winner;
 
 }

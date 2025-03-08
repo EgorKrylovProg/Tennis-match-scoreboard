@@ -1,7 +1,7 @@
 package Repository.Impl;
 
 import Entity.Match;
-import Repository.Interface.DAO;
+import Repository.Interface.Dao;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
-public class MatchDao implements DAO<Integer, Match> {
+public class MatchDao implements Dao<Integer, Match> {
 
     private final SessionFactory sessionFactory;
 

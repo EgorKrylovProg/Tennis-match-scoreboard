@@ -27,6 +27,9 @@
     </Appenders>
 
     <Loggers>
+        <Logger name="Controller.Servlets" level="DEBUG">
+            <AppenderRef ref="DEBUG_LOG"/>
+        </Logger>
         <Root level="INFO">
             <AppenderRef ref="INFO_LOG"/>
         </Root>
