@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Chettan+2&display=swap');
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(0deg, #F3FF75 ,#ADFF7E);
+    font-family: "Baloo Chettan 2", sans-serif;
+}
+
+html {
+    background: #1a1a1a;
+}
+
+.navbar {
+    width: 100vw;
+    height: 7vh;
+    background-color: black;
+    display: flex;
+    align-items: center;
+}
+
+.navLinks a {
+    font-size: 18px;
+    font-weight: normal;
+    color: white;
+    text-decoration: none;
+}
+
+.aboutProject {
+    margin-left: 20px;
+}
+
+
+.navLinks a:hover {
+    color: #cccccc;
+}
+
+.main-content h1 {
+    font-size: 7vh;
+    font-weight: 400;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    color: white;
+    -webkit-text-stroke: 1px black;
+    width: 44vw;
+    margin-top: 6vh;
+    margin-right: 120px;
+    line-height: 86px;
+    padding: 0;
+}
+.main-content img {
+    width: auto;
+    height: 79vh;
+    padding: 0;
+    margin-top: 7vh;
+    border-radius: 60px 15px 60px 60px;
+}
+
+.main-content {
+    display: flex;
+    justify-content: center;
+}
+
+.text-side {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+}
+
+.controls button {
+    font-family: inherit;
+    font-size: 3vh;
+    width: 437px;
+    height: 151px;
+    margin-top: 3vh;
+    margin-left: 6vw;
+    margin-bottom: 50px;
+    border-radius: 60px 60px 60px 60px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.controls button:hover {
+    transform: scale(1.05);
+    background-color: #1a1a1a;
+}
+
+
+
+
+
+
+
+
