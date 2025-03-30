@@ -41,4 +41,8 @@ public class OngoingMatchesService {
         currentMatches.put(uuid, matchScoreModel);
         return uuid;
     }
+
+    public MatchScoreModel getCurrentMatch(UUID uuid) {
+        return currentMatches.get(uuid);
+    }
 }

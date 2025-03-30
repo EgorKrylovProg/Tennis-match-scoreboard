@@ -1,3 +1,5 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +21,7 @@
         <div class="text-side">
             <h1>Приветствуем тебя на теннисном матче!</h1>
             <div class="controls">
-                <a href="#">
+                <a href="http://localhost:8080/tennis-match-scoreboard-Application/new-match">
                     <button type="button">Начать новый матч</button>
                 </a>
                 <a href="#">
@@ -30,6 +32,5 @@
         <img src="images/image_1.jpeg" alt="Теннисная ракетка">
     </div>
 </main>
-
 </body>
 </html>
