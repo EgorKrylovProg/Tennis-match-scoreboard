@@ -33,4 +33,10 @@ public class MatchScoreModel {
         );
     }
 
+    public boolean isTiebreaker() {
+        return scoreFirstPlayer.get(TypePoints.GAME).equals(scoreSecondPlayer.get(TypePoints.GAME))
+                && scoreFirstPlayer.get(TypePoints.GAME) == 6;
+    }
+
+
 }
