@@ -1,114 +1,90 @@
 package Service;
 
 import Entity.MatchScoreModel;
-import Entity.Player;
 import Entity.TypePoints;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Map;
-import java.util.UUID;
 
+@Log4j2
 public class MatchScoreCalculationService {
 
-    private final OngoingMatchesService ongoingMatchesService = new OngoingMatchesService();
-    private MatchScoreModel matchScore;
-    private Map<TypePoints, Integer> scoreFirstPlayer;
-    private Map<TypePoints, Integer> scoreSecondPlayer;
+    private Map<TypePoints, Integer> playerScoredPoint;
+    private Map<TypePoints, Integer> opponentScore;
 
-    public void updatingScore(UUID matchUuid, Integer playerId) {
-        matchScore = ongoingMatchesService.getCurrentMatch(matchUuid);
-        scoreFirstPlayer = matchScore.getScoreFirstPlayer();
-        scoreSecondPlayer = matchScore.getScoreSecondPlayer();
+    public void updatingScore(MatchScoreModel matchScore, Integer playerId) {
+        log.debug("Передана модель счета: {}", matchScore);
+        log.debug("Переданный id игрока выйгравшего очко: {}", playerId);
 
-        if (matchScore.isTiebreaker()) {
-            winningTiebreakerPoint(playerId);
-            checkTiebreakVictory();
+        playerScoredPoint = matchScore.getScorePlayerById(playerId)
+                .orElseThrow(() -> new IllegalArgumentException("Игрок с переданным идентификатором не был найден в матче!"));
+        opponentScore = matchScore.getOpponentScoreByPlayerId(playerId)
+                .orElseThrow(() -> new IllegalArgumentException("Игрок с переданным идентификатором не был найден в матче!"));
+
+        log.debug("Счет выйгравшего очко игрока: {}", playerScoredPoint);
+        log.debug("Счет соперника: {}", opponentScore);
+
+        if (isTiebreaker()) {
+            winningTiebreakerPoint();
         } else {
-            winningPoint(playerId);
-            checkGameVictory();
-            checkSetVictory();
-        }
-        if (isMatchOver()) {
-
-            matchScore.getMatch().getWinner().setId();
+            winningPoint();
         }
     }
 
-    private void winningTiebreakerPoint(Integer playerId) {
-        if(matchScore.getMatch().getPlayerFirst().getId().intValue() == playerId) {
-            scoreFirstPlayer.put(TypePoints.POINTS, scoreFirstPlayer.get(TypePoints.POINTS) + 1);
-        } else {
-            scoreSecondPlayer.put(TypePoints.POINTS, scoreSecondPlayer.get(TypePoints.POINTS) + 1);
-        }
+    private boolean isTiebreaker() {
+        return playerScoredPoint.get(TypePoints.GAME).equals(opponentScore.get(TypePoints.GAME))
+                && playerScoredPoint.get(TypePoints.GAME) == 6;
+    }
+
+    private void winningTiebreakerPoint() {
+        playerScoredPoint.put(TypePoints.POINTS, playerScoredPoint.get(TypePoints.POINTS) + 1);
+        checkTiebreakVictory();
     }
 
     private void checkTiebreakVictory() {
-        if(scoreFirstPlayer.get(TypePoints.POINTS) >= 7
-                && scoreFirstPlayer.get(TypePoints.POINTS) - scoreSecondPlayer.get(TypePoints.POINTS) == 2) {
 
-            scoreFirstPlayer.put(TypePoints.SET, scoreFirstPlayer.get(TypePoints.SET) + 1);
-            scoreFirstPlayer.put(TypePoints.GAME, 0);
-            scoreFirstPlayer.put(TypePoints.POINTS, 0);
-            scoreSecondPlayer.put(TypePoints.GAME, 0);
-            scoreSecondPlayer.put(TypePoints.POINTS, 0);
+        if (playerScoredPoint.get(TypePoints.POINTS) >= 7
+                && playerScoredPoint.get(TypePoints.POINTS) - opponentScore.get(TypePoints.POINTS) == 2) {
 
-        } else if (scoreSecondPlayer.get(TypePoints.POINTS) >= 7
-                && scoreSecondPlayer.get(TypePoints.POINTS) - scoreFirstPlayer.get(TypePoints.POINTS) == 2) {
-
-            scoreSecondPlayer.put(TypePoints.SET, scoreSecondPlayer.get(TypePoints.SET) + 1);
-            scoreSecondPlayer.put(TypePoints.GAME, 0);
-            scoreSecondPlayer.put(TypePoints.POINTS, 0);
-            scoreFirstPlayer.put(TypePoints.GAME, 0);
-            scoreFirstPlayer.put(TypePoints.POINTS, 0);
-
+            playerScoredPoint.put(TypePoints.SET, playerScoredPoint.get(TypePoints.SET) + 1);
+            playerScoredPoint.put(TypePoints.GAME, 0);
+            playerScoredPoint.put(TypePoints.POINTS, 0);
+            opponentScore.put(TypePoints.GAME, 0);
+            opponentScore.put(TypePoints.POINTS, 0);
         }
     }
 
-    private void winningPoint(Integer playerId) {
-        if(matchScore.getMatch().getPlayerFirst().getId().intValue() == playerId) {
-            Integer currentPoints = scoreFirstPlayer.get(TypePoints.POINTS);
-            Integer updatedPoints = currentPoints < 30 ? scoreFirstPlayer.get(TypePoints.POINTS) + 15
-                    : scoreFirstPlayer.get(TypePoints.POINTS) + 10;
-            scoreFirstPlayer.put(TypePoints.POINTS, updatedPoints);
-        } else {
-            Integer currentPoints = scoreSecondPlayer.get(TypePoints.POINTS);
-            Integer updatedPoints = currentPoints < 30 ? scoreFirstPlayer.get(TypePoints.POINTS) + 15
-                    : scoreFirstPlayer.get(TypePoints.POINTS) + 10;
-            scoreSecondPlayer.put(TypePoints.POINTS, updatedPoints);
-        }
+    private void winningPoint() {
+        Integer currentPoints = playerScoredPoint.get(TypePoints.POINTS);
+        Integer updatedPoints = currentPoints < 30 ? playerScoredPoint.get(TypePoints.POINTS) + 15
+                : playerScoredPoint.get(TypePoints.POINTS) + 10;
+        playerScoredPoint.put(TypePoints.POINTS, updatedPoints);
+
+        checkGameVictory();
     }
 
     private void checkGameVictory() {
-        Integer pointsFirstPlayer = scoreFirstPlayer.get(TypePoints.POINTS);
-        Integer pointsSecondPlayer = scoreSecondPlayer.get(TypePoints.POINTS);
+        Integer pointsFirstPlayer = playerScoredPoint.get(TypePoints.POINTS);
+        Integer pointsSecondPlayer = opponentScore.get(TypePoints.POINTS);
 
         if (pointsFirstPlayer > 40 && pointsFirstPlayer - pointsSecondPlayer >= 20) {
-            scoreFirstPlayer.put(TypePoints.POINTS, 0);
-            scoreFirstPlayer.put(TypePoints.GAME, scoreFirstPlayer.get(TypePoints.GAME) + 1);
-            scoreSecondPlayer.put(TypePoints.POINTS, 0);
-        } else if (pointsSecondPlayer > 40 && pointsSecondPlayer - pointsFirstPlayer >= 20) {
-            scoreSecondPlayer.put(TypePoints.POINTS, 0);
-            scoreSecondPlayer.put(TypePoints.GAME, scoreFirstPlayer.get(TypePoints.GAME) + 1);
-            scoreFirstPlayer.put(TypePoints.POINTS, 0);
+            playerScoredPoint.put(TypePoints.POINTS, 0);
+            playerScoredPoint.put(TypePoints.GAME, playerScoredPoint.get(TypePoints.GAME) + 1);
+            opponentScore.put(TypePoints.POINTS, 0);
+
+            checkSetVictory();
         }
     }
 
     private void checkSetVictory() {
-        Integer gamesFirstPlayer = scoreFirstPlayer.get(TypePoints.GAME);
-        Integer gamesSecondPlayer = scoreSecondPlayer.get(TypePoints.GAME);
+        Integer gamesFirstPlayer = playerScoredPoint.get(TypePoints.GAME);
+        Integer gamesSecondPlayer = opponentScore.get(TypePoints.GAME);
 
         if (gamesFirstPlayer >= 6 && gamesFirstPlayer - gamesSecondPlayer == 2) {
-            scoreFirstPlayer.put(TypePoints.SET, scoreFirstPlayer.get(TypePoints.SET) + 1);
-            scoreFirstPlayer.put(TypePoints.GAME, 0);
-            scoreSecondPlayer.put(TypePoints.GAME, 0);
-        } else if (gamesSecondPlayer >= 6 && gamesSecondPlayer - gamesFirstPlayer == 2) {
-            scoreSecondPlayer.put(TypePoints.SET, scoreSecondPlayer.get(TypePoints.SET) + 1);
-            scoreSecondPlayer.put(TypePoints.GAME, 0);
-            scoreFirstPlayer.put(TypePoints.GAME, 0);
+            playerScoredPoint.put(TypePoints.SET, playerScoredPoint.get(TypePoints.SET) + 1);
+            playerScoredPoint.put(TypePoints.GAME, 0);
+            opponentScore.put(TypePoints.GAME, 0);
         }
-    }
-
-    public boolean isMatchOver() {
-        return scoreFirstPlayer.get(TypePoints.SET) == 2 || scoreSecondPlayer.get(TypePoints.SET) == 2;
     }
 
 

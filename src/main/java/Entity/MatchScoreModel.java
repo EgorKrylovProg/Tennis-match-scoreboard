@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Builder
@@ -33,9 +34,22 @@ public class MatchScoreModel {
         );
     }
 
-    public boolean isTiebreaker() {
-        return scoreFirstPlayer.get(TypePoints.GAME).equals(scoreSecondPlayer.get(TypePoints.GAME))
-                && scoreFirstPlayer.get(TypePoints.GAME) == 6;
+    public Optional<Map<TypePoints, Integer>> getScorePlayerById(Integer playerId) {
+        if(match.getPlayerFirst().getId().intValue() == playerId) {
+            return Optional.of(scoreFirstPlayer);
+        } else if(match.getPlayerSecond().getId().intValue() == playerId) {
+            return Optional.of(scoreSecondPlayer);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Map<TypePoints, Integer>> getOpponentScoreByPlayerId(Integer playerId) {
+        if (match.getPlayerFirst().getId().intValue() == playerId) {
+            return Optional.of(scoreSecondPlayer);
+        } else if (match.getPlayerSecond().getId().intValue() == playerId) {
+            return Optional.of(scoreFirstPlayer);
+        }
+        return Optional.empty();
     }
 
 
