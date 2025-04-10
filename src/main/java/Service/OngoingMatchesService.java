@@ -17,7 +17,7 @@ public class OngoingMatchesService {
     private final Map<UUID, MatchScoreModel> currentMatches = new HashMap<>();
     private final NamedEntityDao<Integer, Player> playerDao = new PlayerDao();
 
-    public UUID initializedMatch(NamesPlayerDto namesPlayerDto) throws NoDataException {
+    public UUID initializedMatch(NamesPlayerDto namesPlayerDto) {
         Player firstPlayer = playerDao.getByName(namesPlayerDto.getNamePlayerOne())
                 .orElseThrow(() -> new NoDataException(String.format("The player '%s' was not found in the database!",
                         namesPlayerDto.getNamePlayerOne()))

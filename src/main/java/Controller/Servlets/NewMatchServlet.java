@@ -33,7 +33,7 @@ public class NewMatchServlet extends HttpServlet {
             log.debug("Создан матч с uuid кодом: {}", strUuid);
 
             resp.sendRedirect("/match-score?uuid=" + strUuid);
-        } catch (NoDataException e) {
+        } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 

@@ -52,5 +52,9 @@ public class MatchScoreModel {
         return Optional.empty();
     }
 
+    public boolean isMatchOver() {
+        return match.getWinner() != null;
+    }
+
 
 }
