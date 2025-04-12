@@ -54,7 +54,7 @@ public class MatchScoreCalculationService {
     private void checkTiebreakVictory() {
 
         if (scorePlayerWonPoint.get(TypePoints.POINTS) >= 7
-                && scorePlayerWonPoint.get(TypePoints.POINTS) - opponentScore.get(TypePoints.POINTS) == 2) {
+                && scorePlayerWonPoint.get(TypePoints.POINTS) - opponentScore.get(TypePoints.POINTS) >= 2) {
 
             scorePlayerWonPoint.put(TypePoints.SET, scorePlayerWonPoint.get(TypePoints.SET) + 1);
             scorePlayerWonPoint.put(TypePoints.GAME, 0);
@@ -90,7 +90,7 @@ public class MatchScoreCalculationService {
         Integer gamesFirstPlayer = scorePlayerWonPoint.get(TypePoints.GAME);
         Integer gamesSecondPlayer = opponentScore.get(TypePoints.GAME);
 
-        if (gamesFirstPlayer >= 6 && gamesFirstPlayer - gamesSecondPlayer == 2) {
+        if (gamesFirstPlayer >= 6 && gamesFirstPlayer - gamesSecondPlayer >= 2) {
             scorePlayerWonPoint.put(TypePoints.SET, scorePlayerWonPoint.get(TypePoints.SET) + 1);
             scorePlayerWonPoint.put(TypePoints.GAME, 0);
             opponentScore.put(TypePoints.GAME, 0);
