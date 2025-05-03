@@ -31,4 +31,14 @@ public class Match {
     @JoinColumn(name = "winner")
     private Player winner;
 
+
+    public void setWinnerById(Integer playerId) {
+        if (playerFirst.getId().intValue() == playerId) {
+            winner = playerFirst;
+        } else if (playerSecond.getId().intValue() == playerId) {
+            winner = playerSecond;
+        } else {
+            throw new IllegalArgumentException("Игрок с переданным идентификатором не был найден в матче!");
+        }
+    }
 }
