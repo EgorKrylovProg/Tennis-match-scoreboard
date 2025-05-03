@@ -1,14 +1,18 @@
 package Service;
 
 import Entity.Match;
-import Entity.MatchScoreModel;
+import Model.MatchScoreModel;
 import Entity.Player;
-import Entity.TypePoints;
+import Enum.TypePoints;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class MatchScoringTests {
 
@@ -34,101 +38,31 @@ public class MatchScoringTests {
         matchScoreModel = new MatchScoreModel(match, null, null);
     }
 
-    @Test
-    @DisplayName("Score 40-40")
-    public void gameShouldContinueWhenScoreIsTied() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 0, 40)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 0, 40)));
-
-        matchScoreCalculationService.updatingScore(matchScoreModel, 1);
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(0, 0, 50)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 0, 40)), matchScoreModel.getScoreSecondPlayer())
+    private static Stream<Arguments> getMatchScoreData() {
+        return Stream.of(
+                Arguments.of(List.of(0, 0, 40), List.of(0, 0, 40), List.of(0, 0, 50), List.of(0, 0, 40)),
+                Arguments.of(List.of(0, 0, 40), List.of(0, 0, 0), List.of(0, 1, 0), List.of(0, 0, 0)),
+                Arguments.of(List.of(0, 6, 40), List.of(0, 0, 0), List.of(1, 0, 0), List.of(0, 0, 0)),
+                Arguments.of(List.of(0, 0, 40), List.of(0, 0, 40), List.of(0, 0, 50), List.of(0, 0, 40)),
+                Arguments.of(List.of(0, 5, 40), List.of(0, 5, 0), List.of(0, 6, 0), List.of(0, 5, 0)),
+                Arguments.of(List.of(0, 6, 0), List.of(0, 6, 0), List.of(0, 6, 1), List.of(0, 6, 0)),
+                Arguments.of(List.of(0, 6, 7), List.of(0, 6, 7), List.of(0, 6, 8), List.of(0, 6, 7)),
+                Arguments.of(List.of(0, 6, 6), List.of(0, 6, 0), List.of(1, 0, 0), List.of(0, 0, 0))
         );
     }
 
-    @Test
-    @DisplayName("Score 40-0")
-    public void gameShouldEndWhenScoreIsFortyZero() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 0, 40)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 0, 0)));
+    @ParameterizedTest(name = "Checking the extreme cases of the score")
+    @MethodSource("getMatchScoreData")
+    public void tennisMatchScoreCalculationEdgeCases(List<Integer> scoreFirst, List<Integer> scoreSecond,
+                                                     List<Integer> scoreReferenceFirst, List<Integer> scoreReferenceSecond) {
+        matchScoreModel.setScoreFirstPlayer(createScore(scoreFirst));
+        matchScoreModel.setScoreSecondPlayer(createScore(scoreSecond));
 
         matchScoreCalculationService.updatingScore(matchScoreModel, 1);
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(0, 1, 0)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 0, 0)), matchScoreModel.getScoreSecondPlayer())
-        );
-    }
-
-    @Test
-    @DisplayName("Checking the end of the set")
-    public void setShouldEndWhenScoreGameIsSixZero() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 6, 40)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 0, 0)));
-
-        matchScoreCalculationService.updatingScore(matchScoreModel, 1);
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(1, 0, 0)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 0, 0)), matchScoreModel.getScoreSecondPlayer())
-        );
-    }
-
-    @Test
-    @DisplayName("The set must not end")
-    public void setShouldContinueWhenScoreGameFiveFive() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 5, 40)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 5, 0)));
-
-        matchScoreCalculationService.updatingScore(matchScoreModel, 1);
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(0, 6, 0)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 5, 0)), matchScoreModel.getScoreSecondPlayer())
-        );
-    }
-
-    @Test
-    @DisplayName("Check start tiebreak")
-    public void tiebreakShouldStartWhenScoreGamesIsTied() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 6, 0)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 6, 0)));
-
-        matchScoreCalculationService.updatingScore(matchScoreModel, 1);
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(0, 6, 1)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 6, 0)), matchScoreModel.getScoreSecondPlayer())
-        );
-    }
-
-    @Test
-    @DisplayName("Tiebreak score 7-7")
-    public void tiebreakShouldNotEndWhenScorePointsIsTied() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 6, 7)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 6, 7)));
-
-        matchScoreCalculationService.updatingScore(matchScoreModel, 1);
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(0, 6, 8)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 6, 7)), matchScoreModel.getScoreSecondPlayer())
-        );
-    }
-
-    @Test
-    @DisplayName("Player win the tiebreak")
-    public void playerShouldWinTiebreak() {
-        matchScoreModel.setScoreFirstPlayer(createScore(List.of(0, 6, 6)));
-        matchScoreModel.setScoreSecondPlayer(createScore(List.of(0, 6, 0)));
-
-        matchScoreCalculationService.updatingScore(matchScoreModel, 1);
-
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(createScore(List.of(1, 0, 0)), matchScoreModel.getScoreFirstPlayer()),
-                () -> Assertions.assertEquals(createScore(List.of(0, 0, 0)), matchScoreModel.getScoreSecondPlayer())
+                () -> Assertions.assertEquals(createScore(scoreReferenceFirst), matchScoreModel.getScoreFirstPlayer()),
+                () -> Assertions.assertEquals(createScore(scoreReferenceSecond), matchScoreModel.getScoreSecondPlayer())
         );
     }
 
@@ -140,7 +74,7 @@ public class MatchScoringTests {
 
         matchScoreCalculationService.updatingScore(matchScoreModel, 1);
 
-        Assertions.assertNotNull(matchScoreModel.getMatch().getWinner());
+        Assertions.assertEquals(matchScoreModel.getMatch().getWinner(), matchScoreModel.getMatch().getPlayerFirst());
     }
 
 
