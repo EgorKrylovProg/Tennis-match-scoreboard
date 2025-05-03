@@ -21,8 +21,7 @@ public class NewMatchServlet extends HttpServlet {
     private final OngoingMatchesService ongoingMatchesService = new OngoingMatchesService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var writer = resp.getWriter();
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 
         try {
             NamesPlayerDto namesPlayerDto = mapRequest(req);
@@ -33,7 +32,7 @@ public class NewMatchServlet extends HttpServlet {
             log.debug("Создан матч с uuid кодом: {}", strUuid);
 
             resp.sendRedirect("/match-score?uuid=" + strUuid);
-        } catch (NoDataException e) {
+        } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
