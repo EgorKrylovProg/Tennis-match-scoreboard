@@ -21,8 +21,7 @@ public class NewMatchServlet extends HttpServlet {
     private final OngoingMatchesService ongoingMatchesService = new OngoingMatchesService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        var writer = resp.getWriter();
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
 
         try {
             NamesPlayerDto namesPlayerDto = mapRequest(req);

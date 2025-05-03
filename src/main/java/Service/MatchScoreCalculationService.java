@@ -1,7 +1,7 @@
 package Service;
 
-import Entity.MatchScoreModel;
-import Entity.TypePoints;
+import Model.MatchScoreModel;
+import Enum.TypePoints;
 import Exceptions.MatchAlreadyFinishedException;
 import lombok.extern.log4j.Log4j2;
 

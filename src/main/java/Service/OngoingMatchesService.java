@@ -1,7 +1,7 @@
 package Service;
 
 import Dto.NamesPlayerDto;
-import Entity.MatchScoreModel;
+import Model.MatchScoreModel;
 import Entity.Match;
 import Entity.Player;
 import Exceptions.NoDataException;
