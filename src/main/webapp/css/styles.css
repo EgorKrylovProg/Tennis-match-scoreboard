@@ -54,6 +54,7 @@ html {
     color: white;
     -webkit-text-stroke: 1px black;
     width: 44vw;
+    max-width: 700px;
     margin-top: 6vh;
     margin-right: 120px;
     line-height: 86px;
@@ -170,6 +171,104 @@ button:hover {
     color: white;
     margin-top: 6vh;
     border-radius: 50px 50px 50px 50px;
+    border: none;
+    cursor: pointer;
+}
+
+.cell-name-and-image img {
+    width: 350px;
+    height: 305px;
+    object-fit: cover;
+}
+
+
+.cell-type-points {
+    width: 19vh;
+    height: 7vh;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px 20px 20px 20px;
+}
+
+.table-row {
+    display: flex;
+    color: white;
+    gap: 20px;
+    align-items: flex-end;
+}
+
+.cell-name {
+    width: 27vw;
+    height: 19vh;
+    max-width: 550px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    border-radius: 25px 25px 25px 25px;
+    text-align: center;
+}
+
+.cell,
+.cell-points {
+    width: 19vh;
+    height: 19vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FF8000;
+    border-radius: 25px 25px 25px 25px;
+}
+
+.cell-points {
+    background-color: white;
+    color: #10A400;
+}
+
+.content-match-score-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.match-score-tables {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 5vh;
+    font-weight: 800;
+    margin-top: 3vh;
+}
+
+.cells-set,
+.cells-game {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cell-name-and-image {
+    display: flex;
+    flex-direction: column;
+}
+
+.request-submission-form {
+    padding-bottom: 2vh;
+}
+
+.request-submission-form button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 18vw;
+    height: 15vh;
+    max-width: 300px;
+    background-color: black;
+    color: white;
+    border-radius: 50px 50px 50px 50px;
+    font-size: 5vh;
     border: none;
     cursor: pointer;
 }
