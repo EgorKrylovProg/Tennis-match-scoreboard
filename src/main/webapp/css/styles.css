@@ -255,20 +255,20 @@ button:hover {
 }
 
 .request-submission-form {
-    padding-bottom: 2vh;
+    padding-bottom: 4vh;
 }
 
 .request-submission-form button {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 18vw;
-    height: 15vh;
+    width: 15vw;
+    height: 11vh;
     max-width: 300px;
     background-color: black;
     color: white;
-    border-radius: 50px 50px 50px 50px;
-    font-size: 5vh;
+    border-radius: 25px 25px 25px 25px;
+    font-size: 4vh;
     border: none;
     cursor: pointer;
 }

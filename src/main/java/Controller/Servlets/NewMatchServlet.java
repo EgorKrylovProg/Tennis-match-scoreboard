@@ -1,14 +1,17 @@
 package Controller.Servlets;
 
 import Dto.NamesPlayerDto;
-import Exceptions.NoDataException;
+import Exceptions.InvalidUserInputException;
 import Service.OngoingMatchesService;
 import Service.PlayersManipulationService;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+
 
 import java.io.IOException;
 import java.util.*;
@@ -17,11 +20,18 @@ import java.util.*;
 @Log4j2
 public class NewMatchServlet extends HttpServlet {
 
-    private final PlayersManipulationService playersManipulationService = new PlayersManipulationService();
-    private final OngoingMatchesService ongoingMatchesService = new OngoingMatchesService();
+    private PlayersManipulationService playersManipulationService;
+    private OngoingMatchesService ongoingMatchesService;
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        playersManipulationService = new PlayersManipulationService();
+        ongoingMatchesService = (OngoingMatchesService) getServletContext().getAttribute("matchStorage");
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         try {
             NamesPlayerDto namesPlayerDto = mapRequest(req);
@@ -31,7 +41,9 @@ public class NewMatchServlet extends HttpServlet {
 
             log.debug("Создан матч с uuid кодом: {}", strUuid);
 
-            resp.sendRedirect("/match-score?uuid=" + strUuid);
+            resp.sendRedirect("match-score?uuid=" + strUuid);
+        } catch (InvalidUserInputException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

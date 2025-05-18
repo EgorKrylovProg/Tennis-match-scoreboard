@@ -43,11 +43,12 @@ public class MatchScoringTests {
                 Arguments.of(List.of(0, 0, 40), List.of(0, 0, 40), List.of(0, 0, 50), List.of(0, 0, 40)),
                 Arguments.of(List.of(0, 0, 40), List.of(0, 0, 0), List.of(0, 1, 0), List.of(0, 0, 0)),
                 Arguments.of(List.of(0, 6, 40), List.of(0, 0, 0), List.of(1, 0, 0), List.of(0, 0, 0)),
-                Arguments.of(List.of(0, 0, 40), List.of(0, 0, 40), List.of(0, 0, 50), List.of(0, 0, 40)),
                 Arguments.of(List.of(0, 5, 40), List.of(0, 5, 0), List.of(0, 6, 0), List.of(0, 5, 0)),
                 Arguments.of(List.of(0, 6, 0), List.of(0, 6, 0), List.of(0, 6, 1), List.of(0, 6, 0)),
                 Arguments.of(List.of(0, 6, 7), List.of(0, 6, 7), List.of(0, 6, 8), List.of(0, 6, 7)),
-                Arguments.of(List.of(0, 6, 6), List.of(0, 6, 0), List.of(1, 0, 0), List.of(0, 0, 0))
+                Arguments.of(List.of(0, 6, 6), List.of(0, 6, 0), List.of(1, 0, 0), List.of(0, 0, 0)),
+                Arguments.of(List.of(0, 0, 40), List.of(0, 0, 50), List.of(0, 0, 40), List.of(0, 0, 40))
+
         );
     }
 

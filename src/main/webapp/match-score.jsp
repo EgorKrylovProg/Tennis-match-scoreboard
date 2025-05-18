@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -22,7 +23,7 @@
             <div class="cell-name-and-image">
                 <img src="images/tennis_racket.png" alt>
                 <div class="cell-name">
-                    <span>First Player</span>
+                    <span>${nameFirst}</span>
                 </div>
             </div>
             <div class="cells-set">
@@ -30,7 +31,7 @@
                     <span>Set</span>
                 </div>
                 <div class="cell">
-                    <span>0</span>
+                    <span>${setPointsFirst}</span>
                 </div>
             </div>
             <div class="cells-game">
@@ -38,31 +39,53 @@
                     <span>Game</span>
                 </div>
                 <div class="cell">
-                    <span>4</span>
+                    <span>${gamePointsFirst}</span>
                 </div>
             </div>
             <div class="cell-points">
-                <span>30</span>
+                <span>
+                    <%
+                        int points = (Integer) request.getAttribute("pointsFirst");
+                        if (points > 40) {
+                            out.print("Ad");
+                        } else {
+                            out.print(points);
+                        }
+                    %>
+                </span>
             </div>
-            <form class="request-submission-form" action="#" method="post">
-                <button type="submit">Очко</button>
+            <form class="request-submission-form" action="match-score" method="post">
+                <input type="hidden" name="uuid" value="${uuid}"/>
+
+                <button name="playerId" type="submit" value=${idFirst}>Очко</button>
             </form>
         </div>
         <div class="table-row">
             <div class="cell-name">
-                <span>Second Player</span>
+                <span>${nameSecond}</span>
             </div>
             <div class="cell">
-                <span>0</span>
+                <span>${setPointsSecond}</span>
             </div>
             <div class="cell">
-                <span>3</span>
+                <span>${gamePointsSecond}</span>
             </div>
             <div class="cell-points">
-                <span>15</span>
+                <span>
+                    <%
+                        points = (Integer) request.getAttribute("pointsSecond");
+                        if (points > 40) {
+                            out.print("Ad");
+                        } else {
+                            out.print(points);
+                        }
+                    %>
+                </span>
             </div>
-            <form class="request-submission-form" action="#" method="post">
-                <button type="submit">Очко</button>
+            <form class="request-submission-form" action="match-score" method="post">
+                <input type="hidden" name="uuid" value="${uuid}"/>
+
+                <button name="playerId" type="submit" value=${idSecond}>Очко</button>
             </form>
         </div>
     </div>

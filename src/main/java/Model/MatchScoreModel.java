@@ -5,6 +5,7 @@ import Entity.Match;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -19,7 +20,8 @@ public class MatchScoreModel {
     private Map<TypePoints, Integer> scoreFirstPlayer;
     private Map<TypePoints, Integer> scoreSecondPlayer;
 
-    public MatchScoreModel() {
+    public MatchScoreModel(Match match) {
+        this.match = match;
         scoreFirstPlayer = new EnumMap<>(
                 Map.of(
                         TypePoints.SET, 0,

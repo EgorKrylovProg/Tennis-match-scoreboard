@@ -26,6 +26,7 @@ public class MatchScoreCalculationService {
         log.debug("Счет соперника до изменения: {}", opponentScore);
 
         if (isMatchVictory()) {
+            log.error("Ошибка при попытке обновить счет законченного матча!");
             throw new MatchAlreadyFinishedException("Матч уже завершен!");
         } else if (isTiebreaker()) {
             winningTiebreakerPoint();
@@ -66,9 +67,14 @@ public class MatchScoreCalculationService {
 
     private void winningPoint() {
         Integer currentPoints = scorePlayerWonPoint.get(TypePoints.POINTS);
-        Integer updatedPoints = currentPoints < 30 ? scorePlayerWonPoint.get(TypePoints.POINTS) + 15
+        int updatedPoints = currentPoints < 30 ? scorePlayerWonPoint.get(TypePoints.POINTS) + 15
                 : scorePlayerWonPoint.get(TypePoints.POINTS) + 10;
         scorePlayerWonPoint.put(TypePoints.POINTS, updatedPoints);
+
+        if (updatedPoints == 50 && updatedPoints == opponentScore.get(TypePoints.POINTS)) {
+            scorePlayerWonPoint.put(TypePoints.POINTS, 40);
+            opponentScore.put(TypePoints.POINTS, 40);
+        }
 
         checkGameVictory();
     }

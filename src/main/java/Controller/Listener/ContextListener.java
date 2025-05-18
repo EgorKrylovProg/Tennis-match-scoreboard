@@ -1,5 +1,6 @@
-package Listener;
+package Controller.Listener;
 
+import Service.OngoingMatchesService;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -24,6 +25,8 @@ public class ContextListener implements ServletContextListener {
         try {
             context = new InitialContext();
             context.bind("sessionFactory", getSessionFactory());
+
+            sce.getServletContext().setAttribute("matchStorage", new OngoingMatchesService());
 
             log.info("Инициализирован JNDI контекст.");
         } catch (NamingException e) {
