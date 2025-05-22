@@ -43,9 +43,11 @@ public class NewMatchServlet extends HttpServlet {
 
             resp.sendRedirect("match-score?uuid=" + strUuid);
         } catch (InvalidUserInputException e) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            log.error(e);
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.error(e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
     }

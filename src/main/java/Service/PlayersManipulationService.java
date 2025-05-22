@@ -2,6 +2,7 @@ package Service;
 
 import Dto.NamesPlayerDto;
 import Entity.Player;
+import Exceptions.NoDataException;
 import Repository.Impl.PlayerDao;
 import Repository.Interface.NamedEntityDao;
 
@@ -29,5 +30,10 @@ public class PlayersManipulationService {
 
             playerDao.save(newPlayer);
         }
+    }
+
+    public Player getPlayerByName(String name) {
+        return playerDao.getByName(name)
+                .orElseThrow(() -> new NoDataException(String.format("Игрок '%s' не был найден в базе данных!", name)));
     }
 }

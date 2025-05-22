@@ -1,6 +1,7 @@
 package Controller.Servlets;
 
 import Model.MatchScoreModel;
+import Service.FinishedMatchesPersistenceService;
 import Service.MatchScoreCalculationService;
 import Service.OngoingMatchesService;
 import Utilit.Utilities;
@@ -21,16 +22,18 @@ public class MatchScoreServlet extends HttpServlet {
 
     private OngoingMatchesService ongoingMatchesService;
     private MatchScoreCalculationService calculationScoreService;
+    private FinishedMatchesPersistenceService finishedMatchesPersistenceService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ongoingMatchesService = (OngoingMatchesService) getServletContext().getAttribute("matchStorage");
         calculationScoreService = new MatchScoreCalculationService();
+        finishedMatchesPersistenceService = new FinishedMatchesPersistenceService();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             UUID uuid = UUID.fromString(req.getParameter("uuid"));
             MatchScoreModel matchScoreModel = ongoingMatchesService.getCurrentMatch(uuid);
@@ -40,7 +43,7 @@ public class MatchScoreServlet extends HttpServlet {
             req.getRequestDispatcher("/match-score.jsp").forward(req, resp);
         } catch (Exception ex) {
             log.error(ex);
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -48,8 +51,7 @@ public class MatchScoreServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         try {
-            log.debug(req.getParameter("uuid"));
-            log.debug(req.getParameter("playerId"));
+
             UUID uuid = UUID.fromString(req.getParameter("uuid"));
             Integer playerId = Integer.parseInt(req.getParameter("playerId"));
 
@@ -57,12 +59,15 @@ public class MatchScoreServlet extends HttpServlet {
             calculationScoreService.updatingScore(matchScoreModel, playerId);
 
             if(matchScoreModel.isMatchOver()) {
+                ongoingMatchesService.deletingCompletedMatch(uuid);
+                finishedMatchesPersistenceService.savingMatch(matchScoreModel.getMatch());
                 resp.sendRedirect("index.html");
             }
 
             resp.sendRedirect("match-score?uuid=" + uuid);
         } catch (Exception ex) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.error(ex);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
 
