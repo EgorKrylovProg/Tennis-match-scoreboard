@@ -5,9 +5,10 @@ import Model.MatchScoreModel;
 import Entity.Match;
 import Entity.Player;
 import Exceptions.NoDataException;
+import Repository.Impl.MatchDao;
 import Repository.Impl.PlayerDao;
+import Repository.Interface.Dao;
 import Repository.Interface.NamedEntityDao;
-import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
@@ -17,7 +18,6 @@ import java.util.UUID;
 
 @Log4j2
 @ToString
-@Getter
 public class OngoingMatchesService {
 
     private final Map<UUID, MatchScoreModel> currentMatches = new HashMap<>();
@@ -47,7 +47,14 @@ public class OngoingMatchesService {
     }
 
     public MatchScoreModel getCurrentMatch(UUID uuid) {
-        MatchScoreModel matchScoreModel = currentMatches.get(uuid);
-        return matchScoreModel;
+        return currentMatches.get(uuid);
+    }
+
+    public void deletingCompletedMatch(UUID uuid) {
+        if (currentMatches.get(uuid).isMatchOver()) {
+            currentMatches.remove(uuid);
+        } else {
+            throw new IllegalStateException("Попытка удалить из памяти не законченный матч!");
+        }
     }
 }

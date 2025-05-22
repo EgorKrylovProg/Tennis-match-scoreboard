@@ -32,7 +32,7 @@ public class NamesPlayerDto {
             log.error("Пользователь не ввел имя первого игрока!");
             throw new InvalidUserInputException("Необходимо ввести имя первого игрока!");
         }
-        this.namePlayerOne = name;
+        this.namePlayerTwo = name;
     }
 
 }
