@@ -33,7 +33,7 @@ public class MatchScoreServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             UUID uuid = UUID.fromString(req.getParameter("uuid"));
             MatchScoreModel matchScoreModel = ongoingMatchesService.getCurrentMatch(uuid);
@@ -43,7 +43,7 @@ public class MatchScoreServlet extends HttpServlet {
             req.getRequestDispatcher("/match-score.jsp").forward(req, resp);
         } catch (Exception ex) {
             log.error(ex);
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -66,7 +66,8 @@ public class MatchScoreServlet extends HttpServlet {
 
             resp.sendRedirect("match-score?uuid=" + uuid);
         } catch (Exception ex) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.error(ex);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
 
